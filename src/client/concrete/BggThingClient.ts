@@ -23,7 +23,7 @@ export class BggThingClient implements IBggThingClient {
     dtoParser: IDtoParser<BggThingDto>,
     paginator: IRequestPaginator
   ) {
-    this.resource = "https://www.boardgamegeek.com/xmlapi2/thing";
+    this.resource = "https://boardgamegeek.com/xmlapi2/thing";
     this.builder = builder;
     this.fetcher = fetcher;
     this.responseParser = responseParser;

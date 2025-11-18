@@ -6,6 +6,11 @@ import { GenericQueryBuilder } from "../query";
 import { IFamilyRequest, IForumlistRequest, IThingRequest, IForumRequest, IThreadRequest, IUserRequest, IGuildRequest, IPlaysRequest, ICollectionRequest, ISearchRequest, IHotItemsRequest } from "../request";
 import { IResponseParser, XmlResponseParser } from "../responseparser";
 
+type ClientConfig = {
+  // https://boardgamegeek.com/using_the_xml_api
+  apiKey: string
+}
+
 /**
  * @description Expose all clients to interact with Bgg api.
  * @class BggClient
@@ -26,8 +31,8 @@ export class BggClient {
     readonly search: Omit<IBggSearchClient, "builder" | "fetcher" | "responseParser" | "resource" | "dtoParser">;
     readonly hot: Omit<IBggHotClient, "builder" | "fetcher" | "responseParser" | "resource" | "dtoParser">;
 
-    private constructor() {
-        const fetcher: IFetcher<string, string> = new TextFetcher();
+    private constructor({ apiKey }: ClientConfig) {
+        const fetcher: IFetcher<string, string> = new TextFetcher({ apiKey });
         const responseParser: IResponseParser<string, any> = new XmlResponseParser();
         const paginator: IRequestPaginator = new RequestPaginator();
 
@@ -44,9 +49,9 @@ export class BggClient {
         this.hot = new BggHotClient(new GenericQueryBuilder<IHotItemsRequest>(), fetcher, responseParser, new BggHotDtoParser());
     }
 
-    static Create(): BggClient {
+    static Create(config: ClientConfig): BggClient {
         if (!BggClient.instance) {
-            BggClient.instance = new BggClient();
+            BggClient.instance = new BggClient(config);
         }
         return BggClient.instance;
     }
